@@ -101,3 +101,7 @@
     border-radius: .5rem;
     corner-shape: squircle;
 }
+
+.react-calendar{
+    background-color: unset !important;
+}
