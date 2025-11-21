@@ -63,13 +63,12 @@ const TodoItem = ({ todo, onToggle, onDelete, onEdit, onShare, onSetDueDate, sho
       isOverdue() && "bg-destructive/10"
     )}>
       <div className="flex items-start gap-3">
-        {showCheckbox && (
-          <Checkbox
-            className="mt-1"
-            checked={todo.completed}
-            onChange={() => onToggle(todo.id)}
-          />
-        )}
+        <input
+          type="checkbox"
+          className="mt-1 h-5 w-5 rounded border-input ring-offset-background focus:ring-2 focus:ring-ring cursor-pointer"
+          checked={todo.completed}
+          onChange={() => onToggle(todo.id)}
+        />
         
         <div className="flex-1 min-w-0">
           {isEditing ? (
