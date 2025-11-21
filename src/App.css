@@ -43,10 +43,11 @@
   font-family: 'Poppins', sans-serif;
   background: white;
   padding: 16px;
+  box-shadow: none;
 }
 
 .dark .react-calendar {
-  background: hsl(217.2 32.6% 17.5%);
+  background: transparent;
   color: hsl(210 40% 98%);
 }
 
@@ -119,7 +120,8 @@
 
 .dark .react-calendar__tile:enabled:hover,
 .dark .react-calendar__tile:enabled:focus {
-  background-color: hsl(217.2 32.6% 25%);
+  background-color: hsl(217.2 32.6% 20%);
+  border-color: hsl(217.2 32.6% 30%);
 }
 
 .react-calendar__tile--now {
@@ -127,15 +129,22 @@
   color: white !important;
   font-weight: 600 !important;
   border-radius: 8px !important;
+  border: none !important;
 }
 
 .dark .react-calendar__tile--now {
   background: hsl(217.2 91.2% 59.8%) !important;
+  box-shadow: 0 0 0 2px hsl(217.2 91.2% 45%) !important;
 }
 
 .react-calendar__tile--now:enabled:hover,
 .react-calendar__tile--now:enabled:focus {
   background: hsl(221.2 83.2% 45%) !important;
+}
+
+.dark .react-calendar__tile--now:enabled:hover,
+.dark .react-calendar__tile--now:enabled:focus {
+  background: hsl(217.2 91.2% 65%) !important;
 }
 
 .react-calendar__tile--active {
@@ -161,7 +170,8 @@
 }
 
 .dark .react-calendar__month-view__days__day--neighboringMonth {
-  color: hsl(215 20.2% 65.1%);
+  color: hsl(215.4 16.3% 35%);
+  opacity: 0.6;
 }
 
 .react-calendar__month-view__days__day--weekend {
