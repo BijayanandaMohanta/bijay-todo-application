@@ -128,6 +128,14 @@ const CalendarPanel = ({ todos, onDateSelect }) => {
                 </div>
                 <p className="text-sm text-muted-foreground">No todos for today</p>
               </div>
+            ) : todaysTodos.every(todo => todo.completed) ? (
+              <div className="text-center py-8">
+                <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-amber-400 to-yellow-500 mb-4 animate-bounce">
+                  <i className="bi bi-trophy-fill text-4xl text-white"></i>
+                </div>
+                <h3 className="text-xl font-bold text-primary mb-2">🎉 Congratulations!</h3>
+                <p className="text-sm text-muted-foreground">You've completed all your tasks for today!</p>
+              </div>
             ) : (
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {todaysTodos.map(todo => (
@@ -196,6 +204,35 @@ const CalendarPanel = ({ todos, onDateSelect }) => {
                   {stats.completed}
                 </Badge>
               </div>
+              
+              {/* Completion Progress Chart */}
+              {stats.total > 0 && (
+                <div className="mt-4 pt-4 border-t border-border">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-muted-foreground">Progress</span>
+                    <span className="text-xs font-bold text-primary">
+                      {Math.round((stats.completed / stats.total) * 100)}%
+                    </span>
+                  </div>
+                  <div className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-green-500 to-emerald-600 transition-all duration-500 ease-out"
+                      style={{ width: `${(stats.completed / stats.total) * 100}%` }}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between mt-2">
+                    <span className="text-xs text-muted-foreground">
+                      {stats.completed} of {stats.total} completed
+                    </span>
+                    {stats.completed === stats.total && (
+                      <span className="text-xs font-medium text-green-600 dark:text-green-400 flex items-center gap-1">
+                        <i className="bi bi-check-circle-fill"></i>
+                        All done!
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

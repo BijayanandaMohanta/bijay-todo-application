@@ -106,34 +106,41 @@ const TodoItem = ({ todo, onToggle, onDelete, onEdit, onShare, onSetDueDate }) =
         </div>
 
         {!isEditing && (
-          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-8 w-8"
-              onClick={() => setShowDatePicker(!showDatePicker)}
-              title="Set Due Date"
-            >
-              <i className="bi bi-calendar3"></i>
-            </Button>
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-8 w-8"
-              onClick={() => setIsEditing(true)}
-              title="Edit"
-            >
-              <i className="bi bi-pencil"></i>
-            </Button>
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-8 w-8 text-green-600 hover:text-green-700"
-              onClick={handleShare}
-              title="Share on WhatsApp"
-            >
-              <i className="bi bi-whatsapp"></i>
-            </Button>
+          <div className={cn(
+            "flex gap-1 flex-shrink-0 transition-opacity",
+            "opacity-100 md:opacity-0 md:group-hover:opacity-100"
+          )}>
+            {todo.status !== 'completed' && (
+              <>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8"
+                  onClick={() => setShowDatePicker(!showDatePicker)}
+                  title="Set Due Date"
+                >
+                  <i className="bi bi-calendar3"></i>
+                </Button>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8"
+                  onClick={() => setIsEditing(true)}
+                  title="Edit"
+                >
+                  <i className="bi bi-pencil"></i>
+                </Button>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8 text-green-600 hover:text-green-700"
+                  onClick={handleShare}
+                  title="Share on WhatsApp"
+                >
+                  <i className="bi bi-whatsapp"></i>
+                </Button>
+              </>
+            )}
             <Button
               size="icon"
               variant="ghost"

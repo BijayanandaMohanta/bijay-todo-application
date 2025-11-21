@@ -197,25 +197,30 @@ function App() {
   const handleTranscriptComplete = async (transcribedText) => {
     console.log('Transcript received:', transcribedText);
     
-    // IMPORTANT: Put text in textarea immediately so user can see it
     const textarea = document.getElementById('manualTodoInput');
+    
+    // Show loading state
     if (textarea) {
-      textarea.value = transcribedText;
-      textarea.focus();
-      console.log('Set textarea value to:', transcribedText);
+      textarea.value = 'Processing voice input...';
+      textarea.disabled = true;
     }
 
-    // Auto-improve with AI in background
     try {
-      console.log('Starting AI improvement...');
+      console.log('Refining transcribed text with Gemini...');
       incrementMinuteUsage();
       await recordAIUsage();
       
-      const improvedText = await improveTodoWithAI(transcribedText);
-      console.log('Auto-improved:', improvedText);
+      // Refine the transcribed text: remove duplicates, fix grammar, make it clear
+      const refinedPrompt = `Clean up this voice transcription by removing duplicates, fixing grammar, and making it a clear todo task. Remove any meaningless repetitions or filler words. Keep it concise (1-2 sentences): "${transcribedText}"`;
+      
+      const refinedText = await improveTodoWithAI(refinedPrompt);
+      console.log('Refined text:', refinedText);
       
       if (textarea) {
-        textarea.value = improvedText;
+        textarea.value = refinedText;
+        textarea.disabled = false;
+        textarea.focus();
+        
         // Visual feedback
         textarea.style.backgroundColor = '#dbeafe';
         setTimeout(() => {
@@ -223,8 +228,8 @@ function App() {
         }, 1500);
       }
       
-      // Parse date/time from improved text
-      const parsed = parseDateTimeFromText(improvedText);
+      // Parse date/time from refined text
+      const parsed = parseDateTimeFromText(refinedText);
       if (parsed.date) {
         setTodoDate(formatDateForInput(parsed.date));
       }
@@ -241,8 +246,17 @@ function App() {
       
       await updateAPIUsage();
     } catch (error) {
-      console.error('Error improving:', error);
-      // Text is already in textarea from first step
+      console.error('Error refining text:', error);
+      // Fallback to original transcription
+      if (textarea) {
+        textarea.value = transcribedText;
+        textarea.disabled = false;
+        textarea.focus();
+      }
+      
+      if (error.message.includes('Rate limit') || error.message.includes('Daily limit')) {
+        toast.error(error.message);
+      }
     }
   };
 
@@ -527,24 +541,14 @@ function App() {
                   </div>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                  <button
-                    type="button"
-                    onClick={handleImproveTodo}
-                    className="flex-1 px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-                  >
-                    <i className="bi bi-stars"></i>
-                    Improve with AI
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-1 px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-                  >
-                    <i className="bi bi-plus-lg"></i>
-                    Add Todo
-                  </button>
-                </div>
+                {/* Action Button */}
+                <button
+                  type="submit"
+                  className="w-full px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+                >
+                  <i className="bi bi-plus-lg"></i>
+                  Add Todo
+                </button>
               </form>
             </div>
 
