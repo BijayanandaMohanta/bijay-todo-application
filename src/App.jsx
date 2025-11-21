@@ -194,6 +194,31 @@ function App() {
     );
   };
 
+  const removeDuplicateWords = (text) => {
+    // Split into words
+    const words = text.toLowerCase().split(/\s+/);
+    const result = [];
+    let prev = '';
+    
+    for (let word of words) {
+      // Remove if same as previous word
+      if (word !== prev) {
+        result.push(word);
+      }
+      prev = word;
+    }
+    
+    // Reconstruct sentence with proper capitalization
+    let cleaned = result.join(' ');
+    cleaned = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+    
+    // Fix common patterns
+    cleaned = cleaned.replace(/\s+([.,!?])/g, '$1'); // Remove space before punctuation
+    cleaned = cleaned.replace(/([.!?])\s*([a-z])/g, (match, p1, p2) => p1 + ' ' + p2.toUpperCase()); // Capitalize after sentence end
+    
+    return cleaned;
+  };
+
   const handleTranscriptComplete = async (transcribedText) => {
     console.log('Transcript received:', transcribedText);
     
@@ -247,15 +272,37 @@ function App() {
       await updateAPIUsage();
     } catch (error) {
       console.error('Error refining text:', error);
-      // Fallback to original transcription
+      
+      // Fallback: Manual duplicate removal
+      const cleaned = removeDuplicateWords(transcribedText);
+      console.log('Fallback cleaned text:', cleaned);
+      
       if (textarea) {
-        textarea.value = transcribedText;
+        textarea.value = cleaned;
         textarea.disabled = false;
         textarea.focus();
       }
       
+      // Parse date/time from cleaned text
+      const parsed = parseDateTimeFromText(cleaned);
+      if (parsed.date) {
+        setTodoDate(formatDateForInput(parsed.date));
+      }
+      if (parsed.time) {
+        setTodoTime(parsed.time);
+      }
+      if (parsed.foundKeywords.length > 0) {
+        setDetectedDateTime({
+          keywords: parsed.foundKeywords,
+          date: parsed.date,
+          time: parsed.time
+        });
+      }
+      
       if (error.message.includes('Rate limit') || error.message.includes('Daily limit')) {
         toast.error(error.message);
+      } else {
+        toast.error('AI processing failed. Text has been cleaned manually.');
       }
     }
   };

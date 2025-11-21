@@ -41,9 +41,13 @@
   border: none;
   border-radius: 12px;
   font-family: 'Poppins', sans-serif;
-  background: transparent;
+  background: white;
   padding: 16px;
   box-shadow: none;
+}
+
+.dark .react-calendar {
+  background: unset;
 }
 
 .react-calendar__navigation {
@@ -71,7 +75,7 @@
 
 .dark .react-calendar__navigation button:enabled:hover,
 .dark .react-calendar__navigation button:enabled:focus {
-  background-color: hsl(217.2 32.6% 20%);
+  background-color: unset;
 }
 
 .react-calendar__month-view__weekdays {

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Button } from './ui/button';
+import { Checkbox } from './ui/checkbox';
 import { cn } from '../lib/utils';
 
-const TodoItem = ({ todo, onToggle, onDelete, onEdit, onShare, onSetDueDate }) => {
+const TodoItem = ({ todo, onToggle, onDelete, onEdit, onShare, onSetDueDate, showCheckbox = true }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(todo.text);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -26,6 +27,19 @@ const TodoItem = ({ todo, onToggle, onDelete, onEdit, onShare, onSetDueDate }) =
     onShare(todo.id);
   };
 
+  const handleAddToGoogleCalendar = () => {
+    const text = encodeURIComponent(todo.text);
+    const startDate = todo.dueDate ? new Date(todo.dueDate) : new Date();
+    const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // 1 hour later
+    
+    const formatCalendarDate = (date) => {
+      return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    };
+    
+    const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${formatCalendarDate(startDate)}/${formatCalendarDate(endDate)}`;
+    window.open(calendarUrl, '_blank');
+  };
+
   const handleDateChange = (e) => {
     onSetDueDate(todo.id, e.target.value);
     setShowDatePicker(false);
@@ -38,23 +52,24 @@ const TodoItem = ({ todo, onToggle, onDelete, onEdit, onShare, onSetDueDate }) =
   };
 
   const isOverdue = () => {
-    if (!todo.dueDate || todo.status === 'completed') return false;
+    if (!todo.dueDate || todo.completed) return false;
     return new Date(todo.dueDate) < new Date();
   };
 
   return (
     <div className={cn(
       "group border-b border-border last:border-0 p-4 hover:bg-muted/50 transition-all hover:shadow-sm",
-      todo.status === 'completed' && "bg-muted/30",
+      todo.completed && "bg-muted/30",
       isOverdue() && "bg-destructive/10"
     )}>
       <div className="flex items-start gap-3">
-        <input
-          type="checkbox"
-          className="mt-1 h-5 w-5 rounded border-input ring-offset-background focus:ring-2 focus:ring-ring cursor-pointer"
-          checked={todo.status === 'completed'}
-          onChange={() => onToggle(todo.id)}
-        />
+        {showCheckbox && (
+          <Checkbox
+            className="mt-1"
+            checked={todo.completed}
+            onChange={() => onToggle(todo.id)}
+          />
+        )}
         
         <div className="flex-1 min-w-0">
           {isEditing ? (
@@ -81,7 +96,7 @@ const TodoItem = ({ todo, onToggle, onDelete, onEdit, onShare, onSetDueDate }) =
             <>
               <p className={cn(
                 "text-sm font-medium leading-relaxed break-words",
-                todo.status === 'completed' && "line-through text-muted-foreground"
+                todo.completed && "line-through text-muted-foreground"
               )}>
                 {todo.text}
               </p>
@@ -110,8 +125,17 @@ const TodoItem = ({ todo, onToggle, onDelete, onEdit, onShare, onSetDueDate }) =
             "flex gap-1 flex-shrink-0 transition-opacity",
             "opacity-100 md:opacity-0 md:group-hover:opacity-100"
           )}>
-            {todo.status !== 'completed' && (
+            {!todo.completed && (
               <>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8"
+                  onClick={handleAddToGoogleCalendar}
+                  title="Add to Google Calendar"
+                >
+                  <i className="bi bi-calendar-plus"></i>
+                </Button>
                 <Button
                   size="icon"
                   variant="ghost"

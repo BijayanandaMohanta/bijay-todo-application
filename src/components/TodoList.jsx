@@ -109,6 +109,7 @@ const TodoList = ({
                   onEdit={onEdit}
                   onShare={onShare}
                   onSetDueDate={onSetDueDate}
+                  showCheckbox={true}
                 />
               ))}
             </div>
@@ -137,6 +138,7 @@ const TodoList = ({
                   onEdit={onEdit}
                   onShare={onShare}
                   onSetDueDate={onSetDueDate}
+                  showCheckbox={false}
                 />
               ))}
             </div>
