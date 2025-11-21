@@ -104,10 +104,12 @@
   font-size: 14px;
   color: hsl(222.2 84% 4.9%);
   transition: all 0.2s ease;
+  border: 1px solid transparent;
 }
 
 .dark .react-calendar__tile {
   color: hsl(210 40% 98%);
+  border-color: transparent;
 }
 
 .react-calendar__tile:enabled:hover,
@@ -181,9 +183,27 @@
   font-weight: bold;
 }
 
+.dark .has-todos-pending {
+  background: hsl(45 93% 25%) !important;
+  color: hsl(45 93% 85%) !important;
+}
+
 .has-todos-completed {
   background: #d4edda !important;
   color: #155724 !important;
+}
+
+.dark .has-todos-completed {
+  background: hsl(140 50% 25%) !important;
+  color: hsl(140 50% 85%) !important;
+}
+
+.react-calendar__tile abbr {
+  display: block;
+}
+
+.dark .react-calendar__month-view__days__day--neighboringMonth abbr {
+  opacity: 0.5;
 }
 
 /* Todo Item Styles */
