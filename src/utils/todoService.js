@@ -1,6 +1,8 @@
 import { getCurrentUserId } from './auth';
 
-const API_BASE = 'http://localhost:5000/api';
+import { config } from '../../config.js';
+
+const API_BASE = config.API_BASE_URL;
 
 // Todos operations
 export async function fetchTodos() {
